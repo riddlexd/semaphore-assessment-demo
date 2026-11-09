@@ -1,0 +1,31 @@
+---
+- name: Approved operations task on a remote Linux host
+  hosts: lab_targets
+  gather_facts: false
+  vars:
+    demo_message: "Approved routine maintenance completed"
+  tasks:
+    - name: Validate the requested message
+      ansible.builtin.assert:
+        that:
+          - demo_message is string
+          - demo_message | length > 0
+          - demo_message | length <= 100
+        fail_msg: "The message must contain between 1 and 100 characters."
+
+    - name: Write a harmless file on the remote Linux target
+      ansible.builtin.copy:
+        dest: /tmp/semaphore-demo.txt
+        content: "{{ demo_message }}\n"
+        mode: "0644"
+
+    - name: Read the file back from the remote Linux target
+      ansible.builtin.command: cat /tmp/semaphore-demo.txt
+      register: result
+      changed_when: false
+
+    - name: Verify the remote file content matches the requested text
+      ansible.builtin.assert:
+        that:
+          - result.stdout == demo_message
+        success_msg: "Verified remote result: {{ result.stdout }}"
