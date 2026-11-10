@@ -10,8 +10,8 @@
         that:
           - demo_message is string
           - demo_message | length > 0
-          - demo_message | length <= 100
-        fail_msg: "The message must contain between 1 and 100 characters."
+          - demo_message | length <= 80
+        fail_msg: "The message must contain between 1 and 80 characters."
 
     - name: Write a harmless file on the remote Linux target
       ansible.builtin.copy:
